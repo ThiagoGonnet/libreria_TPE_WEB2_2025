@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /TPE-WEB2PRUEBA/
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Redirige cualquier otra URL a index.php con el parámetro 'action'
+  RewriteRule ^(.*)$ index.php?action=$1 [QSA,L]
+</IfModule>

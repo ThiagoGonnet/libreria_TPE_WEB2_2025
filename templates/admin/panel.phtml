@@ -1,0 +1,24 @@
+<?php include "templates/layout/header.phtml"; ?>
+
+<h1>Panel de Administración</h1>
+<p>Bienvenido <?= $user->username ?></p>
+
+<a href="logout" class="btn btn-danger mb-3">Cerrar sesión</a>
+
+<form class="form" action="panel/addBook" method="POST">
+    <label for="autor">Nombre de autor</label>
+    <input type="text" id="autor" name="autor" required>
+
+    <label for="titulo">Título de libro</label>
+    <input type="text" id="titulo" name="titulo" required>
+
+    <label for="fecha">Fecha de publicación</label>
+    <input type="text" id="fecha" name="fecha" required>
+
+    <button type="submit">Agregar libro</button>
+</form>
+
+<ul>
+    <li><a href="autores">Ver autores (categorías)</a></li>
+    <li><a href="libros">Administrar libros (ítems)</a></li>
+</ul>
