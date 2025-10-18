@@ -26,7 +26,7 @@ switch ($params[0]) {
 
     case 'librosPorAutor':
         $controller = new BookController();
-        $controller->ShowBooksByAuthor($params[1]); // el "1" de la URL
+        $controller->ShowBooksByAuthor($params[1]);
         break;
 
     // --- LOGIN / LOGOUT ---

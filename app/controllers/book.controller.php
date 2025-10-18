@@ -9,7 +9,7 @@ class BookController
 
     function __construct()
     {
-        $this->model = new BookModel(); // crea su propia conexión
+        $this->model = new BookModel();
         $this->view = new BookView();
     }
 
@@ -26,7 +26,10 @@ class BookController
     }
     function AddBook($data)
     {
-        $this->model->addBook($data);  // addBook lo tenés que crear en BookModel
-        header("Location: " . BASE_URL . "panel"); // redirige al panel después
+        $this->model->addBook($data);
+        header("Location: " . BASE_URL . "panel");
     }
+
+    function DeleteBook($id) {}
+    function EditBook($id) {}
 }

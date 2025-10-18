@@ -7,7 +7,6 @@ class BookModel
 
     function __construct()
     {
-        // Creamos nuestra propia conexión usando las constantes
         $this->db = new PDO(
             "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8",
             DB_USER,
