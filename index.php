@@ -5,6 +5,10 @@ require_once 'app/controllers/book.controller.php';
 require_once 'app/controllers/auth.controller.php';
 require_once 'app/middlewares/auth.helper.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $action = $_GET['action'] ?? 'home';
 $params = explode('/', $action);
 
@@ -53,6 +57,17 @@ switch ($params[0]) {
         AuthHelper::checkLoggedIn();
         $controller = new BookController();
         $controller->AddBook($_POST);
+        break;
+    case 'panel/deleteBook':
+        AuthHelper::checkLoggedIn();
+        $controller = new BookController();
+        $controller->DeleteBook($params[1]);
+        break;
+    case 'panel/editBook':
+        AuthHelper::checkLoggedIn();
+        $controller = new BookController();
+        $controller->EditBook($params[1]);
+        break;
     default:
         echo "404 - Página no encontrada";
         break;

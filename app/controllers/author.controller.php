@@ -1,25 +1,30 @@
 <?php
 require_once 'app/models/author.model.php';
+require_once 'app/models/book.model.php';
 require_once 'app/views/list.category.view.php';
 
-class AuthorController {
+class AuthorController
+{
     private $view;
-    private $model;
+    private $authorModel;
+    private $bookModel;
 
-    function __construct() {
+    function __construct()
+    {
         $this->view = new ListCategoryView();
-        $this->model = new AuthorModel();
+        $this->authorModel = new AuthorModel();
+        $this->bookModel = new BookModel();
     }
 
-    function ShowAuthors() {
-        $authors = $this->model->getAuthors();
+    function ShowAuthors()
+    {
+        $authors = $this->authorModel->getAuthors();
         $this->view->ShowAuthors($authors);
     }
 
-    function ShowHome() {
-        $this->view->ShowHome();
+    function ShowHome()
+    {
+        $books = $this->bookModel->getBooks();
+        $this->view->ShowHome($books);
     }
 }
-?>
-
-

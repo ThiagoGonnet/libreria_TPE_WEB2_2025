@@ -5,16 +5,13 @@
 
 <a href="logout" class="btn btn-danger mb-3">Cerrar sesión</a>
 
-<form class="form" action="panel/addBook" method="POST">
-    <label for="autor">Nombre de autor</label>
-    <input type="text" id="autor" name="autor" required>
-
-    <label for="titulo">Título de libro</label>
-    <input type="text" id="titulo" name="titulo" required>
-
-    <label for="fecha">Fecha de publicación</label>
-    <input type="text" id="fecha" name="fecha" required>
-
+<form class="form" action="?action=panel/addBook" method="POST">
+    <label>Nombre de autor</label>
+    <input type="text" name="autor_id" required>
+    <label>Título de libro</label>
+    <input type="text" name="titulo" required>
+    <label>Fecha de publicación</label>
+    <input type="text" name="fecha_de_publicacion" required>
     <button type="submit">Agregar libro</button>
 </form>
 

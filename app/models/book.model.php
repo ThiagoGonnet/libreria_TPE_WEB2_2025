@@ -38,5 +38,43 @@ class BookModel
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
 
-    function addBook($data) {}
+    function addBook($data)
+    {
+        $query = $this->db->prepare("INSERT INTO libros (titulo, fecha_de_publicacion, disponible, autor_id) VALUES (?, ?, ?, ?)");
+        $query->execute([
+            $data['titulo'],
+            $data['fecha_de_publicacion'],
+            1,
+            $data['autor_id']
+        ]);
+    }
+
+    function deleteBookById($id)
+    {
+        $query = $this->db->prepare("DELETE FROM libros WHERE id = ?");
+        return $query->execute([$id]);
+    }
+
+    function getBookById($id)
+    {
+        $query = $this->db->prepare("SELECT * FROM libros WHERE id = ?");
+        $query->execute([$id]);
+        return $query->fetch(PDO::FETCH_OBJ);
+    }
+    function editBookById($id, $data)
+    {
+        $query = $this->db->prepare("
+        UPDATE libros
+        SET titulo = ?,
+            fecha_de_publicacion = ?,
+            autor_id = ?
+        WHERE id = ?
+    ");
+        return $query->execute([
+            $data['titulo'],
+            $data['fecha_de_publicacion'],
+            $data['autor_id'],
+            $id
+        ]);
+    }
 }
