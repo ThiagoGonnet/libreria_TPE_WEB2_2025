@@ -3,6 +3,10 @@ class BookView
 {
   function ShowBooksAdmin($books)
   {
+    if (session_status() === PHP_SESSION_NONE) {
+      session_start();
+    }
+
     include "templates/layout/header.phtml";
     echo "<h2>Lista de libros</h2>";
     echo "<ul>";
@@ -11,7 +15,7 @@ class BookView
       echo "<li>";
       echo $book->titulo . " — " . $book->autor;
 
-      if (isset($_SESSION['USER']) && $_SESSION['USER']->rol === 'admin') {
+      if (isset($_SESSION['USER']) && isset($_SESSION['USER']->rol) && $_SESSION['USER']->rol === 'admin') {
         echo " <a href='?action=panel/editBook/" . $book->id . "'>Editar</a>";
         echo " <a href='?action=panel/deleteBook/" . $book->id . "' onclick=\"return confirm('¿Seguro que querés eliminar este libro?');\">Eliminar</a>";
       }
@@ -21,6 +25,7 @@ class BookView
 
     echo "</ul>";
   }
+
 
   function ShowBooksHome($books)
   {

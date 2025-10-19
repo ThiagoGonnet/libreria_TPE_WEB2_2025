@@ -42,6 +42,7 @@ switch ($params[0]) {
         $controller = new AuthController();
         $controller->doLogin();
         break;
+
     case 'logout':
         $controller = new AuthController();
         $controller->logout();
@@ -50,9 +51,10 @@ switch ($params[0]) {
     // --- PANEL ADMIN ---
     case 'panel':
         AuthHelper::checkLoggedIn();
-        $controller = new AuthController();
-        $controller->showPanel($_SESSION['USER']);
+        $controller = new BookController();
+        $controller->ShowBooksAdmin();
         break;
+
     case 'panel/addBook':
         AuthHelper::checkLoggedIn();
         $controller = new BookController();

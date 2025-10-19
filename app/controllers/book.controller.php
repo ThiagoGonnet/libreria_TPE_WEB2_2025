@@ -55,4 +55,9 @@ class BookController
             $this->view->ShowEditForm($book, $authors);
         }
     }
+    function ShowBooksAdmin()
+    {
+        $books = $this->model->getBooks();
+        $this->view->ShowBooksAdmin($books);
+    }
 }

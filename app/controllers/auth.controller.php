@@ -1,49 +1,39 @@
 <?php
-require_once 'app/models/user.model.php';
-require_once 'app/views/admin.view.php';
+require_once 'config.php';
+require_once 'app/middlewares/auth.helper.php';
 
 class AuthController
 {
-    private $model;
-    private $view;
-
-    function __construct()
+    function showLogin($error = "")
     {
-        $this->model = new UserModel();
-        $this->view = new AdminView();
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
-    function showLogin()
-    {
-        $this->view->showLogin();
+        require_once 'templates/admin/login.phtml';
     }
 
     function doLogin()
     {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $user = $this->model->getUserByUsername($username);
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-        if ($user && $password == $user->password) {
-            $_SESSION['USER'] = $user;
+        if ($username === 'webadmin' && $password === 'admin') {
+            $_SESSION['USER'] = (object)[
+                'username' => $username,
+                'rol' => 'admin'
+            ];
             header("Location: " . BASE_URL . "panel");
+            exit;
         } else {
-            $this->view->showLogin("Usuario o contraseña incorrectos");
+            $error = "Usuario o contraseña incorrectos";
+            $this->showLogin($error);
         }
     }
 
     function logout()
     {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         session_destroy();
         header("Location: " . BASE_URL . "login");
-    }
-
-    function showPanel()
-    {
-        $this->view->showPanel($_SESSION['USER']);
+        exit;
     }
 }

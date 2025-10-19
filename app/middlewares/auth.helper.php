@@ -1,8 +1,12 @@
 <?php
 class AuthHelper
 {
+
     static function checkLoggedIn()
     {
+        define('ADMIN_USER', 'webadmin');
+        define('ADMIN_PASSWORD', 'admin'); // solo para pruebas
+
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
