@@ -1,21 +1,33 @@
-<?php include "templates/layout/header.phtml"; ?>
+<?php include __DIR__ . '/../layout/header.phtml'; ?>
 
-<h1>Panel de Administración</h1>
-<p>Bienvenido <?= $user->username ?></p>
+<h2>Panel de Administración</h2>
+<p>Bienvenido, <?= htmlspecialchars($user->username) ?>!</p>
+<a href="<?= BASE_URL ?>logout">Cerrar sesión</a>
 
-<a href="logout" class="btn btn-danger mb-3">Cerrar sesión</a>
-
+<h3>Agregar Libro</h3>
 <form class="form" action="?action=panel/addBook" method="POST">
-    <label>Nombre de autor</label>
-    <input type="text" name="autor_id" required>
-    <label>Título de libro</label>
+    <label>Título del libro:</label>
     <input type="text" name="titulo" required>
-    <label>Fecha de publicación</label>
-    <input type="text" name="fecha_de_publicacion" required>
+
+    <label>Autor existente:</label>
+    <select name="autor_id">
+        <option value="">-- Seleccionar autor --</option>
+        <?php foreach ($authors as $author) : ?>
+            <option value="<?= $author->id ?>"><?= htmlspecialchars($author->nombre) ?></option>
+        <?php endforeach; ?>
+    </select>
+
+    <label>O autor nuevo:</label>
+    <input type="text" name="autor_nuevo" placeholder="Nombre del autor">
+
+    <label>Fecha de publicación:</label>
+    <input type="date" name="fecha_de_publicacion" required>
+
     <button type="submit">Agregar libro</button>
 </form>
 
+<h3>Opciones</h3>
 <ul>
-    <li><a href="autores">Ver autores (categorías)</a></li>
-    <li><a href="libros">Administrar libros (ítems)</a></li>
+    <li class="item-task"><a href="<?= BASE_URL ?>autores">Ver autores</a></li>
+    <li class="item-task"><a href="<?= BASE_URL ?>libros">Administrar libros</a></li>
 </ul>

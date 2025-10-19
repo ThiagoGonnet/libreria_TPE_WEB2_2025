@@ -1,12 +1,13 @@
 <?php
 require_once 'config.php';
 require_once 'app/middlewares/auth.helper.php';
+require_once 'app/models/book.model.php';
 
 class AuthController
 {
     function showLogin($error = "")
     {
-        require_once 'templates/admin/login.phtml';
+        include __DIR__ . '/../../templates/admin/login.phtml';
     }
 
     function doLogin()
@@ -35,5 +36,22 @@ class AuthController
         session_destroy();
         header("Location: " . BASE_URL . "login");
         exit;
+    }
+
+    function showPanel()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['USER'])) {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+
+        $user = $_SESSION['USER'];
+
+        require_once 'app/models/author.model.php';
+        $authorModel = new AuthorModel();
+        $authors = $authorModel->getAuthors();
+
+        include __DIR__ . '/../../templates/admin/panel.phtml';
     }
 }

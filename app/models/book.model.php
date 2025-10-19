@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config.php';
+require_once 'config.php';
 
 class BookModel
 {
@@ -12,69 +12,84 @@ class BookModel
             DB_USER,
             DB_PASS
         );
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    function getBooks()
+    function getAllBooks()
     {
         $query = $this->db->prepare("
-            SELECT libros.*, autores.nombre AS autor
+            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor
             FROM libros
-            JOIN autores ON libros.autor_id = autores.id
+            LEFT JOIN autores ON libros.autor_id = autores.id
         ");
         $query->execute();
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
 
-    function getBooksByAuthor($idAutor)
+    function getBooksByAuthor($authorId)
     {
         $query = $this->db->prepare("
-            SELECT libros.*, autores.nombre AS autor
+            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor
             FROM libros
-            JOIN autores ON libros.autor_id = autores.id
-            WHERE autor_id = ?
+            LEFT JOIN autores ON libros.autor_id = autores.id
+            WHERE autores.id = ?
         ");
-        $query->execute([$idAutor]);
+        $query->execute([$authorId]);
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    function getAuthors()
+    {
+        $query = $this->db->prepare("SELECT * FROM autores");
+        $query->execute();
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
 
     function addBook($data)
     {
-        $query = $this->db->prepare("INSERT INTO libros (titulo, fecha_de_publicacion, disponible, autor_id) VALUES (?, ?, ?, ?)");
-        $query->execute([
-            $data['titulo'],
-            $data['fecha_de_publicacion'],
-            1,
-            $data['autor_id']
-        ]);
+        if (!empty($data['autor_nuevo'])) {
+            $stmt = $this->db->prepare("SELECT id FROM autores WHERE nombre = ?");
+            $stmt->execute([$data['autor_nuevo']]);
+            $existing = $stmt->fetch(PDO::FETCH_OBJ);
+            if ($existing) {
+                $autor_id = $existing->id;
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO autores (nombre) VALUES (?)");
+                $stmt->execute([$data['autor_nuevo']]);
+                $autor_id = $this->db->lastInsertId();
+            }
+        } else {
+            $autor_id = $data['autor_id'];
+        }
+
+        $stmt = $this->db->prepare("INSERT INTO libros (titulo, fecha_de_publicacion, autor_id) VALUES (?, ?, ?)");
+        $stmt->execute([$data['titulo'], $data['fecha_de_publicacion'], $autor_id]);
+    }
+
+
+    function getBookById($id)
+    {
+        $query = $this->db->prepare("
+            SELECT libros.*, autores.nombre AS autor
+            FROM libros
+            LEFT JOIN autores ON libros.autor_id = autores.id
+            WHERE libros.id = ?
+        ");
+        $query->execute([$id]);
+        return $query->fetch(PDO::FETCH_OBJ);
+    }
+
+    function editBookById($id, $data)
+    {
+        $stmt = $this->db->prepare("
+            UPDATE libros SET titulo = ?, fecha_de_publicacion = ?, autor_id = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$data['titulo'], $data['fecha_de_publicacion'], $data['autor_id'], $id]);
     }
 
     function deleteBookById($id)
     {
-        $query = $this->db->prepare("DELETE FROM libros WHERE id = ?");
-        return $query->execute([$id]);
-    }
-
-    function getBookById($id)
-    {
-        $query = $this->db->prepare("SELECT * FROM libros WHERE id = ?");
-        $query->execute([$id]);
-        return $query->fetch(PDO::FETCH_OBJ);
-    }
-    function editBookById($id, $data)
-    {
-        $query = $this->db->prepare("
-        UPDATE libros
-        SET titulo = ?,
-            fecha_de_publicacion = ?,
-            autor_id = ?
-        WHERE id = ?
-    ");
-        return $query->execute([
-            $data['titulo'],
-            $data['fecha_de_publicacion'],
-            $data['autor_id'],
-            $id
-        ]);
+        $stmt = $this->db->prepare("DELETE FROM libros WHERE id = ?");
+        $stmt->execute([$id]);
     }
 }

@@ -24,7 +24,7 @@ class AuthorController
 
     function ShowHome()
     {
-        $books = $this->bookModel->getBooks();
+        $books = $this->bookModel->getAllBooks();
         $this->view->ShowHome($books);
     }
 }

@@ -29,15 +29,16 @@ switch ($params[0]) {
         break;
 
     case 'librosPorAutor':
+        $authorId = $params[1] ?? null;
         $controller = new BookController();
-        $controller->ShowBooksByAuthor($params[1]);
+        $controller->ShowBooksByAuthor($authorId);
         break;
 
-    // --- LOGIN / LOGOUT ---
     case 'login':
         $controller = new AuthController();
         $controller->showLogin();
         break;
+
     case 'do_login':
         $controller = new AuthController();
         $controller->doLogin();
@@ -48,11 +49,15 @@ switch ($params[0]) {
         $controller->logout();
         break;
 
-    // --- PANEL ADMIN ---
     case 'panel':
         AuthHelper::checkLoggedIn();
-        $controller = new BookController();
-        $controller->ShowBooksAdmin();
+        $user = $_SESSION['USER'] ?? null;
+        if (!$user || $user->rol !== 'admin') {
+            header("Location: " . BASE_URL . "login");
+            exit;
+        }
+        $controller = new AuthController();
+        $controller->showPanel();
         break;
 
     case 'panel/addBook':
@@ -60,16 +65,23 @@ switch ($params[0]) {
         $controller = new BookController();
         $controller->AddBook($_POST);
         break;
+
     case 'panel/deleteBook':
         AuthHelper::checkLoggedIn();
+        $id = $params[1] ?? null;
+        if (!$id) die("ID de libro no proporcionado");
         $controller = new BookController();
-        $controller->DeleteBook($params[1]);
+        $controller->DeleteBook($id);
         break;
+
     case 'panel/editBook':
         AuthHelper::checkLoggedIn();
+        $id = $params[1] ?? null;
+        if (!$id) die("ID de libro no proporcionado");
         $controller = new BookController();
-        $controller->EditBook($params[1]);
+        $controller->EditBook($id);
         break;
+
     default:
         echo "404 - Página no encontrada";
         break;

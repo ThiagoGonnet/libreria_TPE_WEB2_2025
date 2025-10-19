@@ -1,63 +1,59 @@
 <?php
-require_once './app/models/book.model.php';
-require_once './app/views/book.view.php';
+require_once 'app/models/book.model.php';
+require_once 'app/views/book.view.php';
 
 class BookController
 {
     private $model;
     private $view;
-    private $authorModel;
 
     function __construct()
     {
         $this->model = new BookModel();
         $this->view = new BookView();
-        $this->authorModel = new AuthorModel();
     }
 
     function ShowBooks()
     {
-        $books = $this->model->getBooks();
-        $this->view->ShowBooksAdmin($books);
+        $books = $this->model->getAllBooks();
+        if (isset($_SESSION['USER']) && $_SESSION['USER']->rol === 'admin') {
+            $this->view->ShowBooksAdmin($books);
+        } else {
+            $this->view->ShowBooksHome($books);
+        }
     }
 
-    function ShowBooksByAuthor($idAutor)
+    function ShowBooksByAuthor($authorId)
     {
-        $books = $this->model->getBooksByAuthor($idAutor);
-        $this->view->ShowBooksAdmin($books);
+        $books = $this->model->getBooksByAuthor($authorId);
+        $this->view->ShowBooksHome($books);
     }
+
     function AddBook($data)
     {
         $this->model->addBook($data);
         header("Location: " . BASE_URL . "panel");
-    }
-
-    function DeleteBook($id)
-    {
-        $ok = $this->model->deleteBookById($id);
-        if ($ok) {
-            header("Location: " . BASE_URL . "libros?msg=deleted");
-        } else {
-            header("Location: " . BASE_URL . "libros?msg=error");
-        }
         exit;
     }
+
+
+
     function EditBook($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $data = $_POST;
-            $this->model->editBookById($id, $data);
+            $this->model->editBookById($id, $_POST);
             header("Location: " . BASE_URL . "panel");
             exit;
         } else {
             $book = $this->model->getBookById($id);
-            $authors = $this->authorModel->getAuthors();
+            $authors = $this->model->getAuthors();
             $this->view->ShowEditForm($book, $authors);
         }
     }
-    function ShowBooksAdmin()
+
+    function DeleteBook($id)
     {
-        $books = $this->model->getBooks();
-        $this->view->ShowBooksAdmin($books);
+        $this->model->deleteBookById($id);
+        header("Location: " . BASE_URL . "panel");
     }
 }

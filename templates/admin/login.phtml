@@ -1,8 +1,8 @@
-<?php include "templates/layout/header.phtml"; ?>
+<?php include __DIR__ . '/../layout/header.phtml'; ?>
 
 <h2>Login de Administrador</h2>
 
-<form action="?action=do_login" method="POST">
+<form action="<?= BASE_URL ?>do_login" method="POST" class="mt-3">
     <label>Usuario:</label>
     <input type="text" name="username" required>
     <label>Contraseña:</label>
@@ -10,4 +10,4 @@
     <button type="submit" class="btn btn-primary mt-2">Ingresar</button>
 </form>
 
-<?php if (isset($error)) echo "<p style='color:red'>$error</p>"; ?>
+<?php if (!empty($error)) echo "<p style='color:red'>$error</p>"; ?>
