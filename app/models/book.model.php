@@ -90,5 +90,8 @@ class BookModel
     {
         $stmt = $this->db->prepare("DELETE FROM libros WHERE id = ?");
         $stmt->execute([$id]);
+
+        // Retornamos la cantidad de filas afectadas
+        return $stmt->rowCount();
     }
 }
