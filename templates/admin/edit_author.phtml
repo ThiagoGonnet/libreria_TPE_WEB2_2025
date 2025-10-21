@@ -1,0 +1,13 @@
+<h2>Editar Autor</h2>
+<form action="<?= BASE_URL ?>panel/editAuthor/<?= $author->id ?>" method="POST">
+  <label>Nombre:</label>
+  <input type="text" name="nombre" value="<?= htmlspecialchars($author->nombre) ?>" required>
+
+  <label>Nacionalidad:</label>
+  <input type="text" name="nacionalidad" value="<?= htmlspecialchars($author->nacionalidad) ?>">
+
+  <label>Fecha de nacimiento:</label>
+  <input type="date" name="fecha_de_nacimiento" value="<?= $author->fecha_de_nacimiento ?>">
+
+  <button type="submit">Guardar cambios</button>
+</form>

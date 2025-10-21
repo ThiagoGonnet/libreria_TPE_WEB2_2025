@@ -1,7 +1,7 @@
 <?php
-require_once './app/models/book.model.php';
-require_once './app/models/author.model.php';
-require_once './app/views/panel.view.php';
+require_once 'app/models/book.model.php';
+require_once 'app/models/author.model.php';
+require_once 'app/views/panel.view.php';
 
 class PanelController
 {
@@ -16,12 +16,11 @@ class PanelController
     $this->view = new PanelView();
   }
 
-  public function showPanel()
+  public function showPanel($request)
   {
-    $user = $_SESSION['USER_NAME'] ?? null;
-    $books = $this->bookModel->getAllBooks();
-    $authors = $this->authorModel->getAuthors();
-
-    $this->view->showPanel($user, $books, $authors);
+    $user = $request->user->username ?? 'Invitado';
+    $books = (new BookModel())->getAllBooks();
+    $authors = (new AuthorModel())->getAuthors();
+    include "templates/admin/panel.phtml";
   }
 }

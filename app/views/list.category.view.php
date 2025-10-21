@@ -7,33 +7,27 @@ class ListCategoryView
     {
         include_once "templates/layout/header.phtml";
 
-        echo "<h1>Autores</h1>";
-        echo "<ul>";
-
+        echo "<h1>Autores</h1><ul>";
         foreach ($authors as $author) {
             echo "<li>
-            $author->nombre | $author->nacionalidad
-            <a href='librosPorAutor/$author->id'>Ver libros</a>
+                $author->nombre | $author->nacionalidad
+                <a href='librosPorAutor/$author->id'>Ver libros</a>
             </li>";
         }
-
         echo "</ul>";
     }
 
     function ShowHome($books)
     {
         include_once "templates/layout/header.phtml";
-
         echo "<h1>Bienvenido a la Libreria Digital!</h1>";
-
         $this->showBooksHome($books);
     }
 
-    function showBooksHome($books)
+    function ShowBooksHome($books)
     {
         if (!empty($books)) {
-            echo "<h2>Libros disponibles</h2>";
-            echo "<ul>";
+            echo "<h2>Libros disponibles</h2><ul>";
             foreach ($books as $book) {
                 echo "<li>$book->titulo | Autor: $book->autor | Publicado: $book->fecha_de_publicacion</li>";
             }
@@ -43,15 +37,32 @@ class ListCategoryView
         }
     }
 
-    function showBooksByAuthor($books)
+    function ShowBooksByAuthor($books)
     {
         include_once "templates/layout/header.phtml";
 
         if (!empty($books)) {
-            echo "<h2>Libros del autor: " . $books[0]->autor . "</h2>";
-            echo "<ul>";
+            echo "<h2>Libros del autor: " . $books[0]->autor . "</h2><ul>";
             foreach ($books as $book) {
                 echo "<li>$book->titulo | Género: $book->genero | Publicado: $book->fecha_de_publicacion</li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p>No hay libros de este autor.</p>";
+        }
+    }
+
+    function ShowAuthorDetail($author, $books)
+    {
+        include_once "templates/layout/header.phtml";
+        echo "<h1>Autor: $author->nombre</h1>";
+        echo "<p>Nacionalidad: $author->nacionalidad</p>";
+        echo "<p>Fecha de nacimiento: $author->fecha_de_nacimiento</p>";
+
+        if (!empty($books)) {
+            echo "<h2>Libros del autor</h2><ul>";
+            foreach ($books as $book) {
+                echo "<li>$book->titulo | Publicado: $book->fecha_de_publicacion</li>";
             }
             echo "</ul>";
         } else {

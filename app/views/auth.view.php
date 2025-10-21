@@ -1,12 +1,12 @@
 <?php
 class AuthView
 {
-  public function showLogin($error = null)
+  function showLogin($error = null, $user = null)
   {
-    require_once './app/templates/admin/login.phtml';
+    require_once './templates/admin/login.phtml';
   }
 
-  public function showError($error)
+  function showError($error, $user = null)
   {
     echo "<h1>$error</h1>";
   }

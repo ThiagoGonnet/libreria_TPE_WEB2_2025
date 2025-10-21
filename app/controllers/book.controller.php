@@ -1,38 +1,43 @@
 <?php
 require_once 'app/models/book.model.php';
 require_once 'app/views/book.view.php';
+require_once 'app/views/panel.view.php';
 
 class BookController
 {
     private $model;
-    private $view;
+    private $publicView;
+    private $panelView;
 
     function __construct()
     {
         $this->model = new BookModel();
-        $this->view = new BookView();
+        $this->publicView = new BookView();
+        $this->panelView = new PanelView();
     }
 
-function ShowBooks()
-{
-    $books = $this->model->getAllBooks();
-    $this->view->ShowBooks($books);
-}
+    // === Vistas públicas ===
+    function ShowBooks()
+    {
+        $books = $this->model->getAllBooks();
+        $this->publicView->ShowBooks($books);
+    }
 
     function ShowBooksByAuthor($authorId)
     {
         $books = $this->model->getBooksByAuthor($authorId);
-        $this->view->ShowBooksHome($books);
+        $this->publicView->ShowBooksHome($books);
     }
 
+    // === Panel administrador ===
     function AddBook($data)
     {
-        $this->model->addBook($data);
-        header("Location: " . BASE_URL . "panel");
-        exit;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->model->addBook($data);
+            header("Location: " . BASE_URL . "panel");
+            exit;
+        }
     }
-
-
 
     function EditBook($id)
     {
@@ -42,8 +47,8 @@ function ShowBooks()
             exit;
         } else {
             $book = $this->model->getBookById($id);
-            $authors = $this->model->getAuthors();
-            $this->view->ShowEditForm($book, $authors);
+            $authors = $this->model->getAuthorsList();
+            $this->panelView->ShowEditBookForm($book, $authors);
         }
     }
 
@@ -51,5 +56,6 @@ function ShowBooks()
     {
         $this->model->deleteBookById($id);
         header("Location: " . BASE_URL . "panel");
+        exit;
     }
 }

@@ -1,7 +1,7 @@
-<?php require_once __DIR__ . '/../layout/header.phtml'; ?>
+<?php include "templates/layout/header.phtml"; ?>
 
 <h2>Panel de Administración</h2>
-<p>Bienvenido, <?= $user ?>!</p>
+<p>Bienvenido, <?= htmlspecialchars($user); ?>!</p>
 <a href="<?= BASE_URL ?>logout">Cerrar sesión</a>
 
 <h3>Libros</h3>
@@ -18,8 +18,8 @@
         <?php if (!empty($books)) : ?>
             <?php foreach ($books as $book) : ?>
                 <tr>
-                    <td><?= $book->titulo ?></td>
-                    <td><?= isset($book->autor_nombre) ? $book->autor_nombre : "Sin autor" ?></td>
+                    <td><?= htmlspecialchars($book->titulo) ?></td>
+                    <td><?= htmlspecialchars($book->autor) ?></td>
                     <td><?= $book->fecha_de_publicacion ?></td>
                     <td>
                         <a href="<?= BASE_URL ?>panel/editBook/<?= $book->id ?>">Editar</a>
@@ -35,30 +35,6 @@
     </tbody>
 </table>
 
-<h3>Agregar Libro</h3>
-<form action="<?= BASE_URL ?>panel/addBook" method="POST">
-    <label>Título:</label>
-    <input type="text" name="titulo" required>
-
-    <label>Autor existente:</label>
-    <select name="autor_id">
-        <option value="">-- Seleccionar autor --</option>
-        <?php if (!empty($authors)) : ?>
-            <?php foreach ($authors as $author) : ?>
-                <option value="<?= $author->id ?>"><?= $author->nombre ?></option>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </select>
-
-    <label>O autor nuevo:</label>
-    <input type="text" name="autor_nuevo" placeholder="Nombre del autor">
-
-    <label>Fecha de publicación:</label>
-    <input type="date" name="fecha_de_publicacion" required>
-
-    <button type="submit">Agregar libro</button>
-</form>
-
 <h3>Autores</h3>
 <table>
     <thead>
@@ -73,8 +49,8 @@
         <?php if (!empty($authors)) : ?>
             <?php foreach ($authors as $author) : ?>
                 <tr>
-                    <td><?= $author->nombre ?></td>
-                    <td><?= $author->nacionalidad ?></td>
+                    <td><?= htmlspecialchars($author->nombre) ?></td>
+                    <td><?= htmlspecialchars($author->nacionalidad) ?></td>
                     <td><?= $author->fecha_de_nacimiento ?></td>
                     <td>
                         <a href="<?= BASE_URL ?>panel/editAuthor/<?= $author->id ?>">Editar</a>
@@ -89,17 +65,3 @@
         <?php endif; ?>
     </tbody>
 </table>
-
-<h3>Agregar Autor</h3>
-<form action="<?= BASE_URL ?>panel/addAuthor" method="POST">
-    <label>Nombre:</label>
-    <input type="text" name="nombre" required>
-
-    <label>Nacionalidad:</label>
-    <input type="text" name="nacionalidad">
-
-    <label>Fecha de nacimiento:</label>
-    <input type="date" name="fecha_de_nacimiento">
-
-    <button type="submit">Agregar autor</button>
-</form>

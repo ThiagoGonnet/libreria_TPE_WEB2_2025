@@ -1,6 +1,6 @@
 <?php
 require_once './app/models/user.model.php';
-require_once './app/views/admin.view.php';
+require_once './app/views/auth.view.php';
 
 class AuthController
 {
@@ -10,18 +10,18 @@ class AuthController
     function __construct()
     {
         $this->userModel = new UserModel();
-        $this->view = new AdminView(); // solo login
+        $this->view = new AuthView();
     }
 
     public function showLogin($request)
     {
-        $this->view->showLogin("");
+        $this->view->showLogin("", $request->user ?? null);
     }
 
     public function doLogin($request)
     {
         if (empty($_POST['user']) || empty($_POST['password'])) {
-            return $this->view->showLogin("Faltan datos obligatorios");
+            return $this->view->showLogin("Faltan datos obligatorios", $request->user ?? null);
         }
 
         $user = trim($_POST['user']);
@@ -33,9 +33,9 @@ class AuthController
             $_SESSION['USER_ID'] = $userFromDB->id;
             $_SESSION['USER_NAME'] = $userFromDB->username;
             header("Location: " . BASE_URL . "panel");
-            return;
+            exit;
         } else {
-            return $this->view->showLogin("Usuario o contraseña incorrecta");
+            return $this->view->showLogin("Usuario o contraseña incorrecta", $request->user ?? null);
         }
     }
 
@@ -43,6 +43,6 @@ class AuthController
     {
         session_destroy();
         header("Location: " . BASE_URL . "login");
-        return;
+        exit;
     }
 }

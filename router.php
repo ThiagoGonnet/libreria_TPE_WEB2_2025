@@ -2,14 +2,14 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once 'config.php';
 require_once 'app/controllers/author.controller.php';
 require_once 'app/controllers/book.controller.php';
 require_once 'app/controllers/auth.controller.php';
+require_once 'app/controllers/panel.controller.php';
 require_once 'app/middlewares/session.middleware.php';
 require_once 'app/middlewares/guard.middleware.php';
-require_once 'app/controllers/panel.controller.php';
-
 
 $action = $_GET['action'] ?? 'home';
 $params = explode('/', $action);
@@ -17,8 +17,9 @@ $params = explode('/', $action);
 $request = new StdClass();
 $request = (new SessionMiddleware())->run($request);
 
-
 switch ($params[0]) {
+
+    // === PÚBLICO ===
     case 'home':
         $controller = new AuthorController();
         $controller->ShowHome();
@@ -33,11 +34,15 @@ switch ($params[0]) {
         $controller = new BookController();
         $controller->ShowBooks();
         break;
+
     case 'librosPorAutor':
-        $authorId = $params[1];
+        $authorId = $params[1] ?? null;
+        if (!$authorId) die("ID de autor no proporcionado");
         $controller = new BookController();
         $controller->ShowBooksByAuthor($authorId);
         break;
+
+    // === LOGIN / LOGOUT ===
     case 'login':
         $controller = new AuthController();
         $controller->showLogin($request);
@@ -47,21 +52,33 @@ switch ($params[0]) {
         $controller = new AuthController();
         $controller->doLogin($request);
         break;
+
     case 'logout':
         $request = (new GuardMiddleware())->run($request);
         $controller = new AuthController();
         $controller->logout($request);
         break;
-    // panel adm
+
+    // === PANEL ADMIN ===
     case 'panel':
         $request = (new GuardMiddleware())->run($request);
         $controller = new PanelController();
-        $controller->showPanel();
+        $controller->showPanel($request);
         break;
+
+
     case 'panel/addBook':
         $request = (new GuardMiddleware())->run($request);
         $controller = new BookController();
         $controller->AddBook($_POST);
+        break;
+
+    case 'panel/editBook':
+        $request = (new GuardMiddleware())->run($request);
+        $id = $params[1] ?? null;
+        if (!$id) die("ID de libro no proporcionado");
+        $controller = new BookController();
+        $controller->EditBook($id);
         break;
 
     case 'panel/deleteBook':
@@ -72,27 +89,26 @@ switch ($params[0]) {
         $controller->DeleteBook($id);
         break;
 
-    case 'panel/editBook':
-        $request = (new GuardMiddleware())->run($request);
-        $id = $params[1] ?? null;
-        if (!$id) die("ID de libro no proporcionado");
-        $controller = new BookController();
-        $controller->EditBook($id);
-        break;
     case 'panel/addAuthor':
         $request = (new GuardMiddleware())->run($request);
         $controller = new AuthorController();
-        $controller->AddAuthor($request);
+        $controller->AddAuthor($_POST);
         break;
-    case 'panel/deleteAuthor':
-        $request = (new GuardMiddleware())->run($request);
-        $controller = new AuthorController();
-        $controller->DeleteAuthor($request);
-        break;
+
     case 'panel/editAuthor':
         $request = (new GuardMiddleware())->run($request);
+        $id = $params[1] ?? null;
+        if (!$id) die("ID de autor no proporcionado");
         $controller = new AuthorController();
-        $controller->EditAuthor($request);
+        $controller->EditAuthor($id);
+        break;
+
+    case 'panel/deleteAuthor':
+        $request = (new GuardMiddleware())->run($request);
+        $id = $params[1] ?? null;
+        if (!$id) die("ID de autor no proporcionado");
+        $controller = new AuthorController();
+        $controller->DeleteAuthor($id);
         break;
 
     default:
