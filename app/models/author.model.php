@@ -56,9 +56,18 @@ class AuthorModel
         ]);
     }
 
-    // Eliminar autor por ID
     function deleteAuthorById($id)
     {
+        // Verificar si el autor tiene libros asociados
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM libros WHERE autor_id = ?");
+        $stmt->execute([$id]);
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+            throw new Exception("No se puede eliminar el autor: tiene libros asociados.");
+        }
+
+        // Eliminar el autor
         $stmt = $this->db->prepare("DELETE FROM autores WHERE id = ?");
         $stmt->execute([$id]);
     }
