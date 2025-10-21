@@ -54,16 +54,9 @@ class BookController
 
     function DeleteBook($id)
     {
-        // Llamamos al modelo
-        $deletedRows = $this->model->deleteBookById($id);
+        $this->model->deleteBookById($id);
 
-        // Depuración: mostramos qué pasó
-        if ($deletedRows > 0) {
-            echo "El libro con ID $id fue eliminado correctamente.";
-        } else {
-            echo "No se pudo eliminar el libro con ID $id. Verificá que exista en la base.";
-        }
-
-        exit; // Detenemos ejecución para ver el mensaje
+        // redirijo al panel
+        header('Location: ' . BASE_URL . "panel");
     }
 }

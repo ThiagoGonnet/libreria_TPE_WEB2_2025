@@ -1,5 +1,6 @@
+<?php include __DIR__ . '/../layout/header.phtml'; ?>
 <h2>Editar Libro</h2>
-<form action="<?= BASE_URL ?>panel/editBook/<?= $book->id ?>" method="POST">
+<form action="<?= BASE_URL ?>editBook/<?= $book->id ?>" method="POST">
   <label>Título:</label>
   <input type="text" name="titulo" value="<?= htmlspecialchars($book->titulo) ?>" required>
 

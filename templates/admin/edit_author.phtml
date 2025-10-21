@@ -1,5 +1,7 @@
+<?php include __DIR__ . '/../layout/header.phtml'; ?>
+
 <h2>Editar Autor</h2>
-<form action="<?= BASE_URL ?>panel/editAuthor/<?= $author->id ?>" method="POST">
+<form action="<?= BASE_URL ?>editAuthor/<?= $author->id ?>" method="POST">
   <label>Nombre:</label>
   <input type="text" name="nombre" value="<?= htmlspecialchars($author->nombre) ?>" required>
 

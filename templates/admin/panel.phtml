@@ -12,6 +12,8 @@
             <th>Título</th>
             <th>Autor</th>
             <th>Fecha de Publicación</th>
+            <th>Disponible</th>
+            <th>Genero</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -22,9 +24,11 @@
                     <td><?= htmlspecialchars($book->titulo) ?></td>
                     <td><?= htmlspecialchars($book->autor) ?></td>
                     <td><?= $book->fecha_de_publicacion ?></td>
+                    <td><?= $book->disponible ?></td>
+                    <td><?= htmlspecialchars($book->genero) ?></td>
                     <td>
-                        <a href="<?= BASE_URL ?>panel/editBook/<?= $book->id ?>">Editar</a> |
-                        <a href="<?= BASE_URL ?>panel/deleteBook/<?= $book->id ?>">Eliminar</a>
+                        <a href="<?= BASE_URL ?>editBook/<?= $book->id ?>">Editar</a>
+                        <a href="<?= BASE_URL ?>deleteBook/<?= $book->id ?>">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -38,27 +42,35 @@
 
 <!-- ===== FORMULARIO AGREGAR LIBRO ===== -->
 <h3>Agregar Libro</h3>
-<form action="<?= BASE_URL ?>panel/addBook" method="POST">
-    <label for="titulo">Título:</label>
-    <input type="text" name="titulo" id="titulo" required>
 
-    <label for="autor_id">Autor existente:</label>
-    <select name="autor_id" id="autor_id">
-        <option value="">-- Seleccionar autor --</option>
-        <?php foreach ($authors as $author) : ?>
-            <option value="<?= $author->id ?>"><?= htmlspecialchars($author->nombre) ?></option>
-        <?php endforeach; ?>
-    </select>
+<?php if (empty($authors)) : ?>
+    <p style="color:red;">No hay autores registrados. Primero agregá un autor.</p>
+<?php else: ?>
+    <form action="<?= BASE_URL ?>addBook" method="POST">
+        <label for="titulo">Título:</label>
+        <input type="text" name="titulo" id="titulo" required>
 
-    <p>O autor nuevo:</p>
-    <label for="nuevo_autor">Nombre del autor:</label>
-    <input type="text" name="nuevo_autor" id="nuevo_autor">
+        <label for="autor_id">Autor:</label>
+        <select name="autor_id" id="autor_id" required>
+            <option value="">-- Seleccionar autor --</option>
+            <?php foreach ($authors as $author) : ?>
+                <option value="<?= $author->id ?>"><?= htmlspecialchars($author->nombre) ?></option>
+            <?php endforeach; ?>
+        </select>
 
-    <label for="fecha_de_publicacion">Fecha de publicación:</label>
-    <input type="date" name="fecha_de_publicacion" id="fecha_de_publicacion">
+        <label for="fecha_de_publicacion">Fecha de publicación:</label>
+        <input type="date" name="fecha_de_publicacion" id="fecha_de_publicacion">
 
-    <button type="submit">Agregar libro</button>
-</form>
+        <label for="genero">Género:</label>
+        <input type="text" name="genero" id="genero">
+
+        <label for="disponible">Disponible:</label>
+        <input type="checkbox" name="disponible" id="disponible">
+
+        <button type="submit">Agregar libro</button>
+    </form>
+<?php endif; ?>
+
 
 <!-- ==================== AUTORES ==================== -->
 <h3>Autores</h3>
@@ -79,8 +91,8 @@
                     <td><?= htmlspecialchars($author->nacionalidad) ?></td>
                     <td><?= $author->fecha_de_nacimiento ?></td>
                     <td>
-                        <a href="<?= BASE_URL ?>panel/editAuthor/<?= $author->id ?>">Editar</a> |
-                        <a href="<?= BASE_URL ?>panel/deleteAuthor/<?= $author->id ?>">Eliminar</a>
+                        <a href="<?= BASE_URL ?>editAuthor/<?= $author->id ?>">Editar</a> |
+                        <a href="<?= BASE_URL ?>deleteAuthor/<?= $author->id ?>">Eliminar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -94,7 +106,7 @@
 
 <!-- ===== FORMULARIO AGREGAR AUTOR ===== -->
 <h3>Agregar Autor</h3>
-<form action="<?= BASE_URL ?>panel/addAuthor" method="POST">
+<form action="<?= BASE_URL ?>addAuthor" method="POST">
     <label for="nombre">Nombre:</label>
     <input type="text" name="nombre" id="nombre" required>
 

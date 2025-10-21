@@ -71,13 +71,13 @@ switch ($params[0]) {
         break;
 
 
-    case 'panel/addBook':
+    case 'addBook':
         $request = (new GuardMiddleware())->run($request);
         $controller = new BookController();
         $controller->AddBook($_POST);
         break;
 
-    case 'panel/editBook':
+    case 'editBook':
         $request = (new GuardMiddleware())->run($request);
         $id = $params[1] ?? null;
         if (!$id) die("ID de libro no proporcionado");
@@ -85,21 +85,19 @@ switch ($params[0]) {
         $controller->EditBook($id);
         break;
 
-    case 'panel/deleteBook':
+    case 'deleteBook':
         $request = (new GuardMiddleware())->run($request);
-        $id = $params[2] ?? null;
-        if (!$id) die("ID de libro no proporcionado");
+        $id = $params[1] ?? null;
         $controller = new BookController();
         $controller->DeleteBook($id);
         break;
-
-    case 'panel/addAuthor':
+    case 'addAuthor':
         $request = (new GuardMiddleware())->run($request);
         $controller = new AuthorController();
         $controller->AddAuthor($_POST);
         break;
 
-    case 'panel/editAuthor':
+    case 'editAuthor':
         $request = (new GuardMiddleware())->run($request);
         $id = $params[1] ?? null;
         if (!$id) die("ID de autor no proporcionado");
@@ -107,7 +105,7 @@ switch ($params[0]) {
         $controller->EditAuthor($id);
         break;
 
-    case 'panel/deleteAuthor':
+    case 'deleteAuthor':
         $request = (new GuardMiddleware())->run($request);
         $id = $params[1] ?? null;
         if (!$id) die("ID de autor no proporcionado");
