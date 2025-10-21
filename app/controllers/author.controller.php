@@ -27,4 +27,7 @@ class AuthorController
         $books = $this->bookModel->getAllBooks();
         $this->view->ShowHome($books);
     }
+    function DeleteAuthor() {}
+    function AddAuthor() {}
+    function EditAuthor() {}
 }

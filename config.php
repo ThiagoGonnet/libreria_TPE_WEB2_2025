@@ -5,22 +5,17 @@ define('DB_NAME', 'db_library');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-
 define('BASE_URL', '//' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . dirname($_SERVER['PHP_SELF']) . '/');
-
-
 
 try {
     $pdo = new PDO("mysql:host=" . DB_HOST, DB_USER, DB_PASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
+    // Crear la base si no existe
     $pdo->exec("CREATE DATABASE IF NOT EXISTS " . DB_NAME . " CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
-
-
     $pdo->exec("USE " . DB_NAME);
 
-
+    // Crear tablas si no existen
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS autores (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -46,7 +41,7 @@ try {
         );
     ");
 
-
+    // Insertar autores si no hay
     $countAutores = $pdo->query("SELECT COUNT(*) FROM autores")->fetchColumn();
     if ($countAutores == 0) {
         $pdo->exec("
@@ -57,6 +52,7 @@ try {
         ");
     }
 
+    // Insertar libros si no hay
     $countLibros = $pdo->query("SELECT COUNT(*) FROM libros")->fetchColumn();
     if ($countLibros == 0) {
         $pdo->exec("
@@ -67,10 +63,20 @@ try {
         ");
     }
 
-    $countUsers = $pdo->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
-    if ($countUsers == 0) {
+    // Insertar usuario webadmin si no existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE username = ?");
+    $stmt->execute(['webadmin']);
+    $countUser = $stmt->fetchColumn();
 
-        $pdo->exec("INSERT INTO usuarios (username, password) VALUES ('webadmin', 'admin')");
+    if ($countUser == 0) {
+        $hash = password_hash('admin', PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("INSERT INTO usuarios (username, password) VALUES (?, ?)");
+        $stmt->execute(['webadmin', $hash]);
+    } else {
+        // Si existe, asegurarse que la contraseña sea la correcta (opcional)
+        $hash = password_hash('admin', PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE username = ?");
+        $stmt->execute([$hash, 'webadmin']);
     }
 } catch (PDOException $e) {
     die("Error al conectar o crear la base: " . $e->getMessage());

@@ -5,9 +5,4 @@ class AdminView
     {
         include "templates/admin/login.phtml";
     }
-
-    function showPanel($user)
-    {
-        include "templates/admin/panel.phtml";
-    }
 }

@@ -1,20 +1,21 @@
 <?php
 class BookView
 {
-  function ShowBooksAdmin($books)
-  {
-    include "templates/layout/header.phtml";
+  function ShowBooks($books)
+{
+    include_once "templates/layout/header.phtml";
     echo "<h2>Lista de libros</h2><ul>";
     foreach ($books as $book) {
-      echo "<li>" . htmlspecialchars($book->titulo) . " — " . htmlspecialchars($book->autor);
-      if (isset($_SESSION['USER']) && $_SESSION['USER']->rol === 'admin') {
-        echo " <a href='?action=panel/editBook/" . $book->id . "'>Editar</a>";
-        echo " <a href='?action=panel/deleteBook/" . $book->id . "' onclick=\"return confirm('¿Seguro que querés eliminar este libro?');\">Eliminar</a>";
-      }
-      echo "</li>";
+        echo "<li>" . htmlspecialchars($book->titulo) . " — " . htmlspecialchars($book->autor);
+        // Solo mostrar botones si el usuario inició sesión
+        if (!empty($_SESSION['USER'])) {
+            echo " <a href='?action=panel/editBook/" . $book->id . "'>Editar</a>";
+            echo " <a href='?action=panel/deleteBook/" . $book->id . "' onclick=\"return confirm('¿Seguro que querés eliminar este libro?');\">Eliminar</a>";
+        }
+        echo "</li>";
     }
     echo "</ul>";
-  }
+}
 
   function ShowEditForm($book, $authors)
   {
@@ -35,6 +36,7 @@ class BookView
 
   function ShowBooksHome($books)
   {
+    include_once "templates/layout/header.phtml";
     echo "<h2>Libros disponibles</h2><ul>";
     foreach ($books as $book) {
       echo "<li>" . htmlspecialchars($book->titulo) . " — " . htmlspecialchars($book->autor) . "</li>";

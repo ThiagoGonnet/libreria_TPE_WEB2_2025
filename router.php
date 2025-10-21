@@ -1,16 +1,20 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require_once 'config.php';
 require_once 'app/controllers/author.controller.php';
 require_once 'app/controllers/book.controller.php';
 require_once 'app/controllers/auth.controller.php';
-require_once 'app/middlewares/auth.helper.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once 'app/middlewares/session.middleware.php';
+require_once 'app/middlewares/guard.middleware.php';
 
 $action = $_GET['action'] ?? 'home';
 $params = explode('/', $action);
+
+$request = new StdClass();
+$request = (new SessionMiddleware())->run($request);
+
 
 switch ($params[0]) {
     case 'home':
@@ -27,47 +31,41 @@ switch ($params[0]) {
         $controller = new BookController();
         $controller->ShowBooks();
         break;
-
     case 'librosPorAutor':
-        $authorId = $params[1] ?? null;
+        $authorId = $params[1];
         $controller = new BookController();
         $controller->ShowBooksByAuthor($authorId);
         break;
-
     case 'login':
         $controller = new AuthController();
-        $controller->showLogin();
+        $controller->showLogin($request);
         break;
 
     case 'do_login':
         $controller = new AuthController();
-        $controller->doLogin();
+        $controller->doLogin($request);
         break;
-
     case 'logout':
+        $request = (new GuardMiddleware())->run($request);
         $controller = new AuthController();
-        $controller->logout();
+        $controller->logout($request);
+        break;
+    // panel adm
+    case 'panel':
+        $request = (new GuardMiddleware())->run($request);
+        $controller = new AuthController();
+        $controller->ShowPanel($request);
         break;
 
-    case 'panel':
-        AuthHelper::checkLoggedIn();
-        $user = $_SESSION['USER'] ?? null;
-        if (!$user || $user->rol !== 'admin') {
-            header("Location: " . BASE_URL . "login");
-            exit;
-        }
-        $controller = new AuthController();
-        $controller->showPanel();
-        break;
 
     case 'panel/addBook':
-        AuthHelper::checkLoggedIn();
+        $request = (new GuardMiddleware())->run($request);
         $controller = new BookController();
         $controller->AddBook($_POST);
         break;
 
     case 'panel/deleteBook':
-        AuthHelper::checkLoggedIn();
+        $request = (new GuardMiddleware())->run($request);
         $id = $params[1] ?? null;
         if (!$id) die("ID de libro no proporcionado");
         $controller = new BookController();
@@ -75,11 +73,26 @@ switch ($params[0]) {
         break;
 
     case 'panel/editBook':
-        AuthHelper::checkLoggedIn();
+        $request = (new GuardMiddleware())->run($request);
         $id = $params[1] ?? null;
         if (!$id) die("ID de libro no proporcionado");
         $controller = new BookController();
         $controller->EditBook($id);
+        break;
+    case 'panel/addAuthor':
+        $request = (new GuardMiddleware())->run($request);
+        $controller = new AuthorController();
+        $controller->AddAuthor($request);
+        break;
+    case 'panel/deleteAuthor':
+        $request = (new GuardMiddleware())->run($request);
+        $controller = new AuthorController();
+        $controller->DeleteAuthor($request);
+        break;
+    case 'panel/editAuthor':
+        $request = (new GuardMiddleware())->run($request);
+        $controller = new AuthorController();
+        $controller->EditAuthor($request);
         break;
 
     default:

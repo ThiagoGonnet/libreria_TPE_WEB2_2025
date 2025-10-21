@@ -1,57 +1,56 @@
 <?php
-require_once 'config.php';
-require_once 'app/middlewares/auth.helper.php';
-require_once 'app/models/book.model.php';
+require_once './app/models/user.model.php';
+require_once './app/views/auth.view.php';
 
 class AuthController
 {
-    function showLogin($error = "")
+    private $userModel;
+    private $view;
+
+    function __construct()
     {
-        include __DIR__ . '/../../templates/admin/login.phtml';
+        $this->userModel = new UserModel();
+        $this->view = new AuthView();
     }
 
-    function doLogin()
+    public function showLogin($request)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->view->showLogin("", $request->user);
+    }
 
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
+    public function doLogin($request)
+    {
 
-        if ($username === 'webadmin' && $password === 'admin') {
-            $_SESSION['USER'] = (object)[
-                'username' => $username,
-                'rol' => 'admin'
-            ];
+        if (empty($_POST['user']) || empty($_POST['password'])) {
+            return $this->view->showLogin("Faltan datos obligatorios", $request->user);
+        }
+
+        $user = trim($_POST['user']);
+        $password = trim($_POST['password']);
+
+        $userFromDB = $this->userModel->getByUser($user);
+
+        var_dump($_POST['password']);      // password ingresada
+        var_dump($userFromDB->password);   // hash desde DB
+        var_dump(password_verify($_POST['password'], $userFromDB->password));
+        if ($userFromDB && password_verify($password, $userFromDB->password)) {
+            $_SESSION['USER_ID'] = $userFromDB->id;
+            $_SESSION['USER_NAME'] = $userFromDB->username;
             header("Location: " . BASE_URL . "panel");
-            exit;
+            return;
         } else {
-            $error = "Usuario o contraseña incorrectos";
-            $this->showLogin($error);
+            return $this->view->showLogin("Usuario o contraseña incorrecta", $request->user);
         }
     }
 
-    function logout()
+    public function logout($request)
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
         session_destroy();
         header("Location: " . BASE_URL . "login");
-        exit;
+        return;
     }
-
     function showPanel()
     {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['USER'])) {
-            header("Location: " . BASE_URL . "login");
-            exit;
-        }
-
-        $user = $_SESSION['USER'];
-
-        require_once 'app/models/author.model.php';
-        $authorModel = new AuthorModel();
-        $authors = $authorModel->getAuthors();
-
-        include __DIR__ . '/../../templates/admin/panel.phtml';
+        $this->view->showPanel($_SESSION['USER_NAME']);
     }
 }

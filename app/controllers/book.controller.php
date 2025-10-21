@@ -13,15 +13,11 @@ class BookController
         $this->view = new BookView();
     }
 
-    function ShowBooks()
-    {
-        $books = $this->model->getAllBooks();
-        if (isset($_SESSION['USER']) && $_SESSION['USER']->rol === 'admin') {
-            $this->view->ShowBooksAdmin($books);
-        } else {
-            $this->view->ShowBooksHome($books);
-        }
-    }
+function ShowBooks()
+{
+    $books = $this->model->getAllBooks();
+    $this->view->ShowBooks($books);
+}
 
     function ShowBooksByAuthor($authorId)
     {

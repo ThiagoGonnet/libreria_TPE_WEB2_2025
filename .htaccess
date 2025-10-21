@@ -5,6 +5,5 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
 
-  # Redirige cualquier otra URL a index.php con el parámetro 'action'
-  RewriteRule ^(.*)$ index.php?action=$1 [QSA,L]
+  RewriteRule ^(.*)$ ROUTER.php?action=$1 [QSA,L]
 </IfModule>
