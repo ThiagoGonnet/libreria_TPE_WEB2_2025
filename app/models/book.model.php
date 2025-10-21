@@ -66,31 +66,24 @@ class BookModel
 
     function addBook($data)
     {
-        $autor_id = $data['autor_id'] ?? null;
-
-        // Validar que el autor exista
-        $stmt = $this->db->prepare("SELECT id FROM autores WHERE id = ?");
-        $stmt->execute([$autor_id]);
-        $existing = $stmt->fetch(PDO::FETCH_OBJ);
-
-        if (!$existing) {
-            throw new Exception("No se puede agregar el libro: el autor seleccionado no está registrado.");
+        if (!empty($data['autor_nuevo'])) {
+            $stmt = $this->db->prepare("SELECT id FROM autores WHERE nombre = ?");
+            $stmt->execute([$data['autor_nuevo']]);
+            $existing = $stmt->fetch(PDO::FETCH_OBJ);
+            if ($existing) {
+                $autor_id = $existing->id;
+            } else {
+                $stmt = $this->db->prepare("INSERT INTO autores (nombre) VALUES (?)");
+                $stmt->execute([$data['autor_nuevo']]);
+                $autor_id = $this->db->lastInsertId();
+            }
+        } else {
+            $autor_id = $data['autor_id'];
         }
 
-        // Insertar el libro
-        $stmt = $this->db->prepare("
-        INSERT INTO libros (titulo, fecha_de_publicacion, disponible, genero, autor_id)
-        VALUES (?, ?, ?, ?, ?)
-    ");
-        $stmt->execute([
-            $data['titulo'],
-            $data['fecha_de_publicacion'],
-            isset($data['disponible']) ? 1 : 0, // checkbox
-            $data['genero'],
-            $autor_id
-        ]);
+        $stmt = $this->db->prepare("INSERT INTO libros (titulo, fecha_de_publicacion, disponible, genero ,autor_id) VALUES (?,?,?,?,?)");
+        $stmt->execute([$data['titulo'], $data['fecha_de_publicacion'], $data['disponible'], $data['genero'], $autor_id]);
     }
-
 
     function editBookById($id, $data)
     {
