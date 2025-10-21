@@ -54,6 +54,8 @@ class BookController
 
     function DeleteBook($id)
     {
+        var_dump($id); // <--- Ver si llega el id correcto
+        exit;
         $this->model->deleteBookById($id);
         header("Location: " . BASE_URL . "panel");
         exit;

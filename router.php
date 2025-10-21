@@ -83,7 +83,7 @@ switch ($params[0]) {
 
     case 'panel/deleteBook':
         $request = (new GuardMiddleware())->run($request);
-        $id = $params[1] ?? null;
+        $id = $params[2] ?? null;
         if (!$id) die("ID de libro no proporcionado");
         $controller = new BookController();
         $controller->DeleteBook($id);
