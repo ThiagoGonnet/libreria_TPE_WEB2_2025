@@ -14,10 +14,11 @@ class BookModel
         );
     }
 
+    // Devuelve todos los libros con el nombre del autor como 'autor_nombre'
     function getAllBooks()
     {
         $query = $this->db->prepare("
-            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor
+            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor_nombre
             FROM libros
             LEFT JOIN autores ON libros.autor_id = autores.id
         ");
@@ -28,19 +29,12 @@ class BookModel
     function getBooksByAuthor($authorId)
     {
         $query = $this->db->prepare("
-            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor
+            SELECT libros.id, libros.titulo, libros.fecha_de_publicacion, autores.nombre AS autor_nombre
             FROM libros
             LEFT JOIN autores ON libros.autor_id = autores.id
             WHERE autores.id = ?
         ");
         $query->execute([$authorId]);
-        return $query->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    function getAuthors()
-    {
-        $query = $this->db->prepare("SELECT * FROM autores");
-        $query->execute();
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
 
@@ -65,11 +59,10 @@ class BookModel
         $stmt->execute([$data['titulo'], $data['fecha_de_publicacion'], $autor_id]);
     }
 
-
     function getBookById($id)
     {
         $query = $this->db->prepare("
-            SELECT libros.*, autores.nombre AS autor
+            SELECT libros.*, autores.nombre AS autor_nombre
             FROM libros
             LEFT JOIN autores ON libros.autor_id = autores.id
             WHERE libros.id = ?

@@ -8,6 +8,8 @@ require_once 'app/controllers/book.controller.php';
 require_once 'app/controllers/auth.controller.php';
 require_once 'app/middlewares/session.middleware.php';
 require_once 'app/middlewares/guard.middleware.php';
+require_once 'app/controllers/panel.controller.php';
+
 
 $action = $_GET['action'] ?? 'home';
 $params = explode('/', $action);
@@ -53,11 +55,9 @@ switch ($params[0]) {
     // panel adm
     case 'panel':
         $request = (new GuardMiddleware())->run($request);
-        $controller = new AuthController();
-        $controller->ShowPanel($request);
+        $controller = new PanelController();
+        $controller->showPanel();
         break;
-
-
     case 'panel/addBook':
         $request = (new GuardMiddleware())->run($request);
         $controller = new BookController();

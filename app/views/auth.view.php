@@ -1,19 +1,13 @@
 <?php
-
 class AuthView
 {
-
-  public function showLogin($error, $user)
+  public function showLogin($error = null)
   {
-    require_once './templates/admin/login.phtml';
+    require_once './app/templates/admin/login.phtml';
   }
 
-  public function showError($error, $user)
+  public function showError($error)
   {
     echo "<h1>$error</h1>";
-  }
-  function showPanel($user)
-  {
-    include "templates/admin/panel.phtml";
   }
 }
